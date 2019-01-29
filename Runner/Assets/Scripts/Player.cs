@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     private float speed;
     [SerializeField]
     private float sideSpeed;
+    public Action onGameOver;
     [SerializeField]
     private float score = 0;
     // Start is called before the first frame update
@@ -34,6 +35,10 @@ public class Player : MonoBehaviour
     private void OnCollisionEnter(Collision other) {
         if(other.gameObject.tag == "Obstacle"){
             this.enabled = false;
+
+            if(onGameOver!=null){
+                onGameOver();
+            }
         }
     }
     private void OnTriggerEnter(Collider other) {
