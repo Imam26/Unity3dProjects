@@ -15,7 +15,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float sideSpeed;
 
-    public Action onGameOver;
+    public Action onGameOver, onWin;
+    
     [SerializeField]
     private float score = 0;
     
@@ -36,13 +37,15 @@ public class Player : MonoBehaviour
             rb.AddForce(sideSpeed*Time.deltaTime,0,speed*Time.deltaTime);
         }   
          
-        if(rb.transform.position.z >= rbGround.transform.localScale.z/2 + rbGround.transform.position.z){             
-            rb.transform.position = new Vector3(rbGround.transform.position.x,
-                                                rbGround.transform.position.y+1,
-                                                rbGround.transform.position.z - rbGround.transform.localScale.z/2); 
-        }
+        onReachTheFinish();
     }
 
+    private void onReachTheFinish(){
+        if(rb.transform.position.z >= rbGround.transform.localScale.z/2 + rbGround.transform.position.z){             
+            this.enabled = false;
+            onWin();
+        }
+    }
     private void OnCollisionEnter(Collision other) {
         if(other.gameObject.tag == "Obstacle"){
             this.enabled = false;
@@ -52,7 +55,7 @@ public class Player : MonoBehaviour
             }
         }
         else if(other.gameObject.tag == "JumpObstacle"){
-            //rb.MovePosition(rb.transform.position + new Vector3(0,2,0));
+            rb.AddForce(Vector3.up*10);
         }
     }
     private void OnTriggerEnter(Collider other) {

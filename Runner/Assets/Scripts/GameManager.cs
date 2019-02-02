@@ -10,22 +10,26 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private Text scoreText;
     [SerializeField]
-    private GameOverPanel gameOverPanel;
+    private GamePanel gamePanel;
 
     [SerializeField]
     private float score;
+
+    private float playerStartPosZ;
     // Start is called before the first frame update
     void Start()
     {
         player.onGameOver +=GameOver;
+        player.onWin +=PlayerWin;
+        playerStartPosZ = player.transform.position.z;
     }
 
     // Update is called once per frame
     void Update()
     {
-        score = player.transform.position.z;
+        score  = player.transform.position.z - playerStartPosZ;
         PlayerPrefs.SetFloat("score", score);
-        scoreText.text = player.transform.position.z.ToString("0");
+        scoreText.text = (player.transform.position.z-playerStartPosZ).ToString("0");
     }
 
     private void GameOver(){
@@ -36,6 +40,17 @@ public class GameManager : MonoBehaviour
             bestScore = score;
             PlayerPrefs.SetFloat("score", score);
         }
-        gameOverPanel.Init(score, bestScore);
+        gamePanel.Init(false, "Game Over!", score, bestScore);
+    }
+
+    private void PlayerWin(){
+        
+        var bestScore = PlayerPrefs.GetFloat("score");
+        
+        if(score>bestScore){
+            bestScore = score;
+            PlayerPrefs.SetFloat("score", score);
+        }
+        gamePanel.Init(true, "You win!!!", score, bestScore);
     }   
 }
